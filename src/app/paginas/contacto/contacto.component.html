@@ -1,0 +1,299 @@
+<div class="sitio">
+
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
+    <header class="encabezado">
+
+        <div class="encabezado-superior">
+
+            <a routerLink="/" class="logo">
+                CRÓNICA HISTÓRICA
+            </a>
+
+            <span
+                class="fecha"
+                id="fechaActual"
+            >
+                {{ fechaActual }}
+            </span>
+
+        </div>
+
+
+        <div class="linea-separadora"></div>
+
+
+        <nav class="navegacion">
+
+            <div class="menu-enlaces">
+
+                <a routerLink="/">
+                    Inicio
+                </a>
+
+                <a routerLink="/historia">
+                    Crónicas
+                </a>
+
+                <a routerLink="/historia" fragment="archivo">
+                    Archivos
+                </a>
+
+                <a routerLink="/historia" [queryParams]="{ favoritos: 1 }">
+                    Favoritos
+                </a>
+
+                <a
+                    routerLink="/contacto"
+                    class="activo"
+                >
+                    Contacto
+                </a>
+
+            </div>
+
+
+            <div class="acciones-menu">
+
+                <input
+                    type="search"
+                    class="busqueda-simple"
+                    placeholder="Buscar"
+                    aria-label="Buscar crónicas"
+                    #buscador
+                    (keydown)="buscarCronicas($event, buscador.value)"
+                >
+
+                <button
+                    type="button"
+                    class="boton-suscripcion"
+                    id="botonSuscripcion"
+                    (click)="configurarSuscripcion()"
+                >
+                    Suscríbete
+                </button>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+
+    <main>
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section class="hero-interno">
+
+            <div>
+
+                <span class="etiqueta">
+                    CRÓNICA HISTÓRICA
+                </span>
+
+                <h1>
+                    Contacto
+                </h1>
+
+                <p>
+                    Comparte con nosotros tus comentarios,
+                    historias, documentos o sugerencias.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             FORMULARIO
+        ================================================== -->
+
+        <section class="contacto">
+
+            <div class="contacto-info">
+
+                <span class="subtitulo">
+                    ESCRÍBENOS
+                </span>
+
+                <h2>
+                    Tu historia también forma parte
+                    de la memoria
+                </h2>
+
+                <p>
+                    Si tienes información, documentos,
+                    fotografías o relatos relacionados con
+                    nuestra historia, puedes escribirnos.
+                </p>
+
+                <div class="detalle-contacto">
+
+                    <div>
+                        <strong>
+                            Archivo
+                        </strong>
+
+                        <span>
+                            Historias y documentos
+                        </span>
+                    </div>
+
+                    <div>
+                        <strong>
+                            Revista
+                        </strong>
+
+                        <span>
+                            Crónica Histórica
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="formulario-contenedor">
+
+                <form
+                    id="formularioContacto"
+                    novalidate
+                    #formulario
+                    (submit)="configurarFormularioContacto($event, formulario)"
+                >
+
+                    <div class="campo">
+
+                        <label for="nombre">
+                            Nombre
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nombre"
+                            name="nombre"
+                            #nombre
+                            placeholder="Escribe tu nombre"
+                            required
+                        >
+
+                        <small
+                            class="error-campo"
+                            id="errorNombre"
+                        >{{ errores().errorNombre }}</small>
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label for="correo">
+                            Correo electrónico
+                        </label>
+
+                        <input
+                            type="email"
+                            id="correo"
+                            name="correo"
+                            #correo
+                            placeholder="correo@ejemplo.com"
+                            required
+                        >
+
+                        <small
+                            class="error-campo"
+                            id="errorCorreo"
+                        >{{ errores().errorCorreo }}</small>
+
+                    </div>
+
+
+                    <div class="campo">
+
+                        <label for="mensaje">
+                            Mensaje
+                        </label>
+
+                        <textarea
+                            id="mensaje"
+                            name="mensaje"
+                            #mensaje
+                            rows="7"
+                            placeholder="Escribe tu mensaje..."
+                            required
+                        ></textarea>
+
+                        <small
+                            class="error-campo"
+                            id="errorMensaje"
+                        >{{ errores().errorMensaje }}</small>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="boton-principal"
+                    >
+                        Enviar mensaje
+                    </button>
+
+
+                    <div
+                        id="mensajeFormulario"
+                        class="mensaje-formulario"
+                        [class.exito]="mensajeEnviado()"
+                        role="status"
+                    >
+                        @if (mensajeEnviado()) {
+
+                            <strong>
+                                Mensaje enviado correctamente.
+                            </strong>
+
+                            <span>
+                                Gracias por comunicarte con
+                                Crónica Histórica.
+                            </span>
+
+                        }
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer class="footer">
+
+        <div>
+
+            <strong>
+                CRÓNICA HISTÓRICA
+            </strong>
+
+            <p>
+                Revista digital de memoria,
+                historia y patrimonio.
+            </p>
+
+        </div>
+
+        <p class="derechos">
+            Derechos reservados © 2026
+        </p>
+
+    </footer>
+
+</div>

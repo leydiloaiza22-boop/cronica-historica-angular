@@ -1,0 +1,724 @@
+<div class="sitio">
+
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
+    <header class="encabezado">
+
+        <div class="encabezado-superior">
+
+            <a routerLink="/" class="logo">
+                CRÓNICA HISTÓRICA
+            </a>
+
+            <span class="fecha" id="fechaActual">
+                {{ fechaActual }}
+            </span>
+
+        </div>
+
+
+        <div class="linea-separadora"></div>
+
+
+        <nav class="navegacion">
+
+            <div class="menu-enlaces">
+
+                <a routerLink="/">
+                    Inicio
+                </a>
+
+                <a routerLink="/historia" class="activo">
+                    Crónicas
+                </a>
+
+                <a routerLink="/historia" fragment="archivo">
+                    Archivos
+                </a>
+
+                <a routerLink="/historia" [queryParams]="{ favoritos: 1 }">
+                    Favoritos
+                </a>
+
+                <a routerLink="/contacto">
+                    Contacto
+                </a>
+
+            </div>
+
+
+            <div class="acciones-menu">
+
+                <form
+                    class="buscador"
+                    id="formBuscar"
+                    (submit)="$event.preventDefault()"
+                >
+
+                    <input
+                        type="search"
+                        id="buscadorCronicas"
+                        placeholder="Buscar"
+                        aria-label="Buscar crónicas"
+                        #buscadorCronicas
+                        [value]="busquedaInicial"
+                        (input)="mostrarCronicas()"
+                    >
+
+                </form>
+
+
+                <button
+                    type="button"
+                    class="boton-suscripcion"
+                    id="botonSuscripcion"
+                    (click)="configurarSuscripcion()"
+                >
+                    Suscríbete
+                </button>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+
+    <main>
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section class="hero-interno">
+
+            <div>
+
+                <span class="etiqueta">
+                    ARCHIVO HISTÓRICO
+                </span>
+
+                <h1>
+                    Crónicas
+                </h1>
+
+                <p>
+                    Relatos, acontecimientos y testimonios
+                    que nos permiten acercarnos al pasado
+                    desde diferentes perspectivas.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             FILTROS
+        ================================================== -->
+
+        <section class="catalogo">
+
+            <div class="cabecera-catalogo">
+
+                <div>
+
+                    <span class="subtitulo">
+                        COLECCIÓN
+                    </span>
+
+                    <h2>
+                        {{ tituloCatalogo() }}
+                    </h2>
+
+                </div>
+
+
+                <div class="filtros">
+
+                    <button
+                        type="button"
+                        class="filtro"
+                        [class.activo]="categoriaSeleccionada() === 'Todas'"
+                        data-categoria="Todas"
+                        (click)="configurarFiltros('Todas')"
+                    >
+                        Todas
+                    </button>
+
+                    <button
+                        type="button"
+                        class="filtro"
+                        [class.activo]="categoriaSeleccionada() === 'Historia'"
+                        data-categoria="Historia"
+                        (click)="configurarFiltros('Historia')"
+                    >
+                        Historia
+                    </button>
+
+                    <button
+                        type="button"
+                        class="filtro"
+                        [class.activo]="categoriaSeleccionada() === 'Personajes'"
+                        data-categoria="Personajes"
+                        (click)="configurarFiltros('Personajes')"
+                    >
+                        Personajes
+                    </button>
+
+                    <button
+                        type="button"
+                        class="filtro"
+                        [class.activo]="categoriaSeleccionada() === 'Patrimonio'"
+                        data-categoria="Patrimonio"
+                        (click)="configurarFiltros('Patrimonio')"
+                    >
+                        Patrimonio
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- AQUÍ SE INSERTAN LAS CRÓNICAS -->
+
+            <div
+                class="tarjetas"
+                id="contenedorCronicas"
+            >
+                @if (estado() === 'cargando') {
+
+                    <p class="cargando">
+                        Cargando crónicas...
+                    </p>
+
+                } @else if (estado() === 'error') {
+
+                    <div class="mensaje-error">
+                        <strong>
+                            No se pudieron cargar las crónicas.
+                        </strong>
+
+                        <p>
+                            Verifica que el proyecto esté
+                            ejecutándose con npm start.
+                        </p>
+                    </div>
+
+                } @else {
+
+                    <!-- CREAR TARJETAS (o mensaje SIN RESULTADOS) -->
+
+                    @for (cronica of resultados(); track cronica.id + '-' + versionCatalogo(); let i = $index) {
+
+                        <ng-container
+                            *ngTemplateOutlet="tarjetaCronica; context: { $implicit: cronica, indice: i }"
+                        />
+
+                    } @empty {
+
+                        <div class="sin-resultados">
+
+                            <span>
+                                📜
+                            </span>
+
+                            <h3>
+                                No encontramos crónicas
+                            </h3>
+
+                            <p>
+                                Prueba con otra búsqueda o
+                                categoría.
+                            </p>
+
+                        </div>
+
+                    }
+
+                }
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             MI ARCHIVO
+        ================================================== -->
+
+        <section
+            class="mi-archivo"
+            id="archivo"
+        >
+
+            <div class="cabecera-archivo">
+
+                <div>
+
+                    <span class="subtitulo">
+                        FAVORITOS
+                    </span>
+
+                    <h2>
+                        Mi Archivo Personal
+                    </h2>
+
+                </div>
+
+                <span
+                    id="contadorFavoritos"
+                    class="contador-favoritos"
+                >
+                    {{ contadorFavoritos() }}
+                </span>
+
+            </div>
+
+
+            <p class="texto-archivo">
+
+                Aquí aparecerán las crónicas que guardes
+                para consultarlas posteriormente.
+
+            </p>
+
+
+            <div
+                id="listaFavoritos"
+                class="tarjetas archivo-tarjetas"
+            >
+                @if (favoritosMostrados()) {
+
+                    @for (cronica of guardadas(); track cronica.id + '-' + versionFavoritos(); let i = $index) {
+
+                        <ng-container
+                            *ngTemplateOutlet="tarjetaCronica; context: { $implicit: cronica, indice: resultados().length + i }"
+                        />
+
+                    } @empty {
+
+                        <div class="sin-favoritos">
+
+                            <span>
+                                ☆
+                            </span>
+
+                            <p>
+                                Todavía no tienes crónicas
+                                guardadas en tu archivo personal.
+                            </p>
+
+                        </div>
+
+                    }
+
+                }
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             MINI CRUD
+        ================================================== -->
+
+        <section class="gestion">
+
+            <details>
+
+                <summary>
+                    Gestión básica de crónicas
+                </summary>
+
+
+                <div class="gestion-contenido">
+
+                    <p>
+                        Esta sección permite crear,
+                        editar y eliminar registros del
+                        prototipo utilizando almacenamiento
+                        local del navegador.
+                    </p>
+
+
+                    <form
+                        id="formCrud"
+                        #formCrud
+                        (submit)="configurarCrud($event)"
+                    >
+
+                        <input
+                            type="hidden"
+                            id="crudId"
+                            #crudId
+                        >
+
+
+                        <div class="campo-crud">
+
+                            <label for="crudTitulo">
+                                Título
+                            </label>
+
+                            <input
+                                type="text"
+                                id="crudTitulo"
+                                #crudTitulo
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="campo-crud">
+
+                            <label for="crudCategoria">
+                                Categoría
+                            </label>
+
+                            <select
+                                id="crudCategoria"
+                                #crudCategoria
+                                required
+                            >
+
+                                <option value="Historia">
+                                    Historia
+                                </option>
+
+                                <option value="Personajes">
+                                    Personajes
+                                </option>
+
+                                <option value="Patrimonio">
+                                    Patrimonio
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="campo-crud">
+
+                            <label for="crudResumen">
+                                Resumen
+                            </label>
+
+                            <textarea
+                                id="crudResumen"
+                                #crudResumen
+                                rows="3"
+                                required
+                            ></textarea>
+
+                        </div>
+
+
+                        <div class="campo-crud">
+
+                            <label for="crudContenido">
+                                Contenido
+                            </label>
+
+                            <textarea
+                                id="crudContenido"
+                                #crudContenido
+                                rows="6"
+                                required
+                            ></textarea>
+
+                        </div>
+
+
+                        <div class="botones-crud">
+
+                            <button
+                                type="submit"
+                                class="boton-principal"
+                            >
+                                Guardar crónica
+                            </button>
+
+                            <button
+                                type="button"
+                                class="boton-secundario"
+                                id="cancelarCrud"
+                                (click)="limpiarFormularioCrud()"
+                            >
+                                Cancelar
+                            </button>
+
+                        </div>
+
+                    </form>
+
+
+                    <div
+                        id="listaCrud"
+                        class="lista-crud"
+                    >
+                        @for (cronica of listaCrud(); track cronica.id) {
+
+                            <div class="fila-crud">
+
+                                <div>
+
+                                    <strong>
+                                        {{ cronica.titulo }}
+                                    </strong>
+
+                                    <span>
+                                        {{ cronica.categoria }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="acciones-crud">
+
+                                    <button
+                                        type="button"
+                                        (click)="editarCronica(cronica.id)"
+                                    >
+                                        Editar
+                                    </button>
+
+
+                                    <button
+                                        type="button"
+                                        (click)="eliminarCronica(cronica.id)"
+                                    >
+                                        Eliminar
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        }
+                    </div>
+
+                </div>
+
+            </details>
+
+        </section>
+
+    </main>
+
+
+    <footer class="footer">
+
+        <div>
+
+            <strong>
+                CRÓNICA HISTÓRICA
+            </strong>
+
+            <p>
+                Revista digital de memoria,
+                historia y patrimonio.
+            </p>
+
+        </div>
+
+        <p class="derechos">
+            Derechos reservados © 2026
+        </p>
+
+    </footer>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL DE LECTURA
+====================================================== -->
+
+<div
+    class="modal"
+    id="modalCronica"
+    role="dialog"
+    aria-modal="true"
+    [class.abierto]="modalAbierto()"
+    [attr.aria-hidden]="modalAbierto() ? 'false' : 'true'"
+    (click)="clicEnModal($event)"
+    #modal
+>
+
+    <div class="modal-contenido">
+
+        <button
+            type="button"
+            class="cerrar-modal"
+            id="cerrarModal"
+            aria-label="Cerrar"
+            (click)="cerrarModal()"
+        >
+            ×
+        </button>
+
+
+        <div id="detalleCronica">
+
+            @if (detalle(); as cronica) {
+
+                <article class="lectura">
+
+                    <div class="lectura-imagen">
+
+                        <img
+                            [src]="cronica.imagen"
+                            [alt]="cronica.titulo"
+                        >
+
+                    </div>
+
+
+                    <div class="lectura-contenido">
+
+                        <div class="meta-cronica">
+
+                            <span>
+                                {{ cronica.categoria }}
+                            </span>
+
+                            <span>
+                                {{ cronica.fecha }}
+                            </span>
+
+                        </div>
+
+
+                        <h1>
+                            {{ cronica.titulo }}
+                        </h1>
+
+
+                        <p class="autor">
+                            Por {{ cronica.autor }}
+                        </p>
+
+
+                        <p class="entradilla">
+                            {{ cronica.resumen }}
+                        </p>
+
+
+                        <div class="cuerpo-cronica">
+
+                            @for (parrafo of formatearContenido(cronica.contenido); track $index) {
+                                <p>{{ parrafo }}</p>
+                            }
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="boton-principal"
+                            (click)="alternarFavorito(cronica.id); actualizarDetalle(cronica.id)"
+                        >
+                            {{
+                                esFavorita(cronica.id)
+                                    ? "★ Guardada en Mi Archivo"
+                                    : "☆ Guardar en Mi Archivo"
+                            }}
+                        </button>
+
+                    </div>
+
+                </article>
+
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     TARJETA DE CRÓNICA (antes crearTarjetaCronica)
+====================================================== -->
+
+<ng-template #tarjetaCronica let-cronica let-indice="indice">
+
+    <article
+        class="tarjeta-cronica aparecer"
+        [attr.data-id]="cronica.id"
+        [style.animation-delay]="(indice * 0.08) + 's'"
+    >
+
+        <div class="imagen-tarjeta">
+
+            <img
+                [src]="cronica.imagen"
+                [alt]="cronica.titulo"
+            >
+
+            <span class="icono-categoria">
+                {{ cronica.icono }}
+            </span>
+
+        </div>
+
+
+        <div class="contenido-tarjeta">
+
+            <div class="meta-cronica">
+
+                <span>
+                    {{ cronica.categoria }}
+                </span>
+
+                <span>
+                    {{ cronica.fecha }}
+                </span>
+
+            </div>
+
+
+            <h3>
+                {{ cronica.titulo }}
+            </h3>
+
+
+            <p>
+                {{ cronica.resumen }}
+            </p>
+
+
+            <div class="acciones-tarjeta">
+
+                <button
+                    type="button"
+                    class="boton-leer"
+                    (click)="abrirCronica(cronica.id)"
+                >
+                    Leer Crónica
+                </button>
+
+
+                <button
+                    type="button"
+                    class="boton-favorito"
+                    [class.guardada]="esFavorita(cronica.id)"
+                    (click)="alternarFavorito(cronica.id)"
+                    title="Guardar en Mi Archivo"
+                >
+                    {{ esFavorita(cronica.id) ? "★" : "☆" }}
+                </button>
+
+            </div>
+
+        </div>
+
+    </article>
+
+</ng-template>

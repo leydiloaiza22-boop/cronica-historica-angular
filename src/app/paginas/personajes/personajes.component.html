@@ -1,0 +1,270 @@
+<div class="sitio">
+
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
+    <header class="encabezado">
+
+        <div class="encabezado-superior">
+
+            <a routerLink="/" class="logo">
+                CRÓNICA HISTÓRICA
+            </a>
+
+            <span
+                class="fecha"
+                id="fechaActual"
+            >
+                {{ fechaActual }}
+            </span>
+
+        </div>
+
+
+        <div class="linea-separadora"></div>
+
+
+        <nav class="navegacion">
+
+            <div class="menu-enlaces">
+
+                <a routerLink="/">
+                    Inicio
+                </a>
+
+                <a routerLink="/historia">
+                    Crónicas
+                </a>
+
+                <a routerLink="/historia" fragment="archivo">
+                    Archivos
+                </a>
+
+                <a routerLink="/historia" [queryParams]="{ favoritos: 1 }">
+                    Favoritos
+                </a>
+
+                <a routerLink="/contacto">
+                    Contacto
+                </a>
+
+            </div>
+
+
+            <div class="acciones-menu">
+
+                <input
+                    type="search"
+                    class="busqueda-simple"
+                    placeholder="Buscar"
+                    aria-label="Buscar crónicas"
+                    #buscador
+                    (keydown)="buscarCronicas($event, buscador.value)"
+                >
+
+                <button
+                    type="button"
+                    class="boton-suscripcion"
+                    id="botonSuscripcion"
+                    (click)="configurarSuscripcion()"
+                >
+                    Suscríbete
+                </button>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+
+    <main>
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section class="hero-interno">
+
+            <div>
+
+                <span class="etiqueta">
+                    PERSONAJES
+                </span>
+
+                <h1>
+                    Personajes
+                </h1>
+
+                <p>
+                    Personas cuyas acciones, decisiones y
+                    experiencias dejaron una huella en
+                    diferentes momentos de la historia.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             PERSONAJES
+        ================================================== -->
+
+        <section class="seccion-personajes">
+
+            <div class="titulo-seccion">
+
+                <span class="subtitulo">
+                    MEMORIA
+                </span>
+
+                <h2>
+                    Personajes históricos
+                </h2>
+
+                <p>
+                    Conoce algunos de los protagonistas
+                    que permiten acercarnos a diferentes
+                    períodos y acontecimientos.
+                </p>
+
+            </div>
+
+
+            <div class="personajes">
+
+                <article class="personaje">
+
+                    <div class="imagen-personaje">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1551913902-c92207136625?auto=format&fit=crop&w=700&q=80"
+                            alt="Retrato histórico"
+                        >
+
+                    </div>
+
+                    <span class="numero-personaje">
+                        01
+                    </span>
+
+                    <h3>
+                        Personajes que dejaron huella
+                    </h3>
+
+                    <p>
+                        Las historias personales también
+                        permiten comprender los cambios
+                        sociales y culturales de una época.
+                    </p>
+
+                    <a
+                        routerLink="/historia" [queryParams]="{ id: 2 }"
+                        class="enlace-leer"
+                    >
+                        Conocer historia →
+                    </a>
+
+                </article>
+
+
+                <article class="personaje">
+
+                    <div class="imagen-personaje">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1564399579883-451a5d44ec08?auto=format&fit=crop&w=700&q=80"
+                            alt="Documento y memoria histórica"
+                        >
+
+                    </div>
+
+                    <span class="numero-personaje">
+                        02
+                    </span>
+
+                    <h3>
+                        Voces del pasado
+                    </h3>
+
+                    <p>
+                        Testimonios, documentos y relatos
+                        ayudan a recuperar las voces de
+                        quienes participaron en la historia.
+                    </p>
+
+                    <a
+                        routerLink="/historia" [queryParams]="{ id: 1 }"
+                        class="enlace-leer"
+                    >
+                        Conocer historia →
+                    </a>
+
+                </article>
+
+
+                <article class="personaje">
+
+                    <div class="imagen-personaje">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1568667256549-094345857637?auto=format&fit=crop&w=700&q=80"
+                            alt="Archivo histórico"
+                        >
+
+                    </div>
+
+                    <span class="numero-personaje">
+                        03
+                    </span>
+
+                    <h3>
+                        Memoria y legado
+                    </h3>
+
+                    <p>
+                        Recordar el pasado permite reconocer
+                        los procesos que dieron forma a las
+                        sociedades actuales.
+                    </p>
+
+                    <a
+                        routerLink="/historia" [queryParams]="{ id: 4 }"
+                        class="enlace-leer"
+                    >
+                        Conocer historia →
+                    </a>
+
+                </article>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer class="footer">
+
+        <div>
+
+            <strong>
+                CRÓNICA HISTÓRICA
+            </strong>
+
+            <p>
+                Revista digital de memoria,
+                historia y patrimonio.
+            </p>
+
+        </div>
+
+        <p class="derechos">
+            Derechos reservados © 2026
+        </p>
+
+    </footer>
+
+</div>

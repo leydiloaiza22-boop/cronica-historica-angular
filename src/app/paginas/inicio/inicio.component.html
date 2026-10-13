@@ -1,0 +1,343 @@
+<div class="sitio">
+
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
+    <header class="encabezado">
+
+        <div class="encabezado-superior">
+
+            <a routerLink="/" class="logo">
+                CRÓNICA HISTÓRICA
+            </a>
+
+            <span class="fecha" id="fechaActual">
+                {{ fechaActual }}
+            </span>
+
+        </div>
+
+
+        <div class="linea-separadora"></div>
+
+
+        <nav class="navegacion">
+
+            <div class="menu-enlaces">
+
+                <a routerLink="/" class="activo">
+                    Inicio
+                </a>
+
+                <a routerLink="/historia">
+                    Crónicas
+                </a>
+
+                <a routerLink="/historia" fragment="archivo">
+                    Archivos
+                </a>
+
+                <a routerLink="/historia" [queryParams]="{ favoritos: 1 }">
+                    Favoritos
+                </a>
+
+                <a routerLink="/contacto">
+                    Contacto
+                </a>
+
+            </div>
+
+
+            <div class="acciones-menu">
+
+                <form
+                    class="buscador"
+                    id="formBuscarInicio"
+                >
+
+                    <input
+                        type="search"
+                        id="buscarInicio"
+                        placeholder="Buscar"
+                        aria-label="Buscar crónicas"
+                        #buscador
+                        (keydown)="configurarBusquedaInicio($event, buscador.value)"
+                    >
+
+                </form>
+
+
+                <button
+                    type="button"
+                    class="boton-suscripcion"
+                    id="botonSuscripcion"
+                    (click)="configurarSuscripcion()"
+                >
+                    Suscríbete
+                </button>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+
+    <!-- =====================================================
+         CONTENIDO PRINCIPAL
+    ====================================================== -->
+
+    <main>
+
+        <!-- HERO / PORTADA -->
+
+        <section class="portada">
+
+            <article class="noticia-principal">
+
+                <div class="marco-fotografia">
+
+                    <img 
+                        src="https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1000&q=80" 
+                        alt="Documentos y manuscritos históricos">
+
+                </div>
+
+
+                <div class="contenido-noticia-principal">
+
+                    <span class="etiqueta">
+                        CRÓNICA DESTACADA
+                    </span>
+
+                    <h1>
+                        Memoria, territorio y transformación
+                    </h1>
+
+                    <p>
+                        Una mirada a los acontecimientos,
+                        documentos y relatos que permiten
+                        comprender cómo el pasado continúa
+                        transformando nuestra memoria colectiva.
+                    </p>
+
+                    <a
+                        routerLink="/historia" [queryParams]="{ id: 1 }"
+                        class="boton-enlace"
+                    >
+                        Leer crónica
+                    </a>
+
+                </div>
+
+            </article>
+
+
+            <!-- BARRA LATERAL -->
+
+            <aside class="barra-lateral">
+
+                <span class="etiqueta">
+                    REPORTAJE ESPECIAL
+                </span>
+
+                <h2>
+                    La verdad detrás del silencio
+                </h2>
+
+
+                <div class="imagen-lateral">
+
+                    <img 
+                        src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=600&q=80" 
+                        alt="Libros y documentos históricos">
+
+                </div>
+
+
+                <p>
+                    Los documentos históricos conservan
+                    voces, acontecimientos y testimonios
+                    que permiten reconstruir historias
+                    que el tiempo no debería borrar.
+                </p>
+
+
+                <a
+                    routerLink="/historia" [queryParams]="{ id: 5 }"
+                    class="enlace-leer"
+                >
+                    Leer reportaje →
+                </a>
+
+            </aside>
+
+        </section>
+
+
+        <!-- =================================================
+             EXPLORA
+        ================================================== -->
+
+        <section class="seccion-explora">
+
+            <div class="encabezado-seccion">
+
+                <span class="linea-dorada"></span>
+
+                <div>
+                    <span class="subtitulo">
+                        ARCHIVO HISTÓRICO
+                    </span>
+
+                    <h2>
+                        Explora Crónica Histórica
+                    </h2>
+                </div>
+
+            </div>
+
+
+            <p class="introduccion-seccion">
+                Historias, personajes y patrimonio para
+                conocer, conservar y comprender nuestra
+                memoria.
+            </p>
+
+
+            <!-- TRES TARJETAS ORIGINALES -->
+
+            <div class="tarjetas-explora">
+
+                <a
+                    routerLink="/historia"
+                    class="tarjeta-explora"
+                >
+
+                    <span class="icono-tarjeta">
+                        📜
+                    </span>
+
+                    <h3>
+                        Historia
+                    </h3>
+
+                    <p>
+                        Acontecimientos y relatos que
+                        permiten comprender nuestro pasado.
+                    </p>
+
+                    <span class="leer-tarjeta">
+                        Explorar →
+                    </span>
+
+                </a>
+
+
+                <a
+                    routerLink="/personajes"
+                    class="tarjeta-explora"
+                >
+
+                    <span class="icono-tarjeta">
+                        👤
+                    </span>
+
+                    <h3>
+                        Personajes
+                    </h3>
+
+                    <p>
+                        Personas que dejaron una huella
+                        en diferentes momentos de la historia.
+                    </p>
+
+                    <span class="leer-tarjeta">
+                        Explorar →
+                    </span>
+
+                </a>
+
+
+                <a
+                    routerLink="/historia" [queryParams]="{ categoria: 'Patrimonio' }"
+                    class="tarjeta-explora"
+                >
+
+                    <span class="icono-tarjeta">
+                        🏛️
+                    </span>
+
+                    <h3>
+                        Patrimonio
+                    </h3>
+
+                    <p>
+                        Lugares, objetos y tradiciones
+                        que forman parte de nuestra memoria.
+                    </p>
+
+                    <span class="leer-tarjeta">
+                        Explorar →
+                    </span>
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             FRASE / CITA
+        ================================================== -->
+
+        <section class="cita">
+
+            <span class="comilla">
+                “
+            </span>
+
+            <blockquote>
+                Conservar la memoria es una forma
+                de comprender quiénes somos y de
+                reconocer las historias que construyeron
+                nuestro presente.
+            </blockquote>
+
+            <span class="linea-cita"></span>
+
+            <p>
+                CRÓNICA HISTÓRICA
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="footer">
+
+        <div>
+            <strong>
+                CRÓNICA HISTÓRICA
+            </strong>
+
+            <p>
+                Revista digital de memoria,
+                historia y patrimonio.
+            </p>
+        </div>
+
+        <p class="derechos">
+            Derechos reservados © 2026
+        </p>
+
+    </footer>
+
+</div>
