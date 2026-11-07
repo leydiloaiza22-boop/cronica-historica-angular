@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
+import { AuthService } from '../../servicios/auth.service';
 import { CronicasService } from '../../servicios/cronicas.service';
 
 /* =========================================================
@@ -15,6 +16,8 @@ import { CronicasService } from '../../servicios/cronicas.service';
 export class PersonajesComponent {
 
     private servicio = inject(CronicasService);
+
+    auth = inject(AuthService);
 
     private router = inject(Router);
 

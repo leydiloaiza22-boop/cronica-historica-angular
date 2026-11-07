@@ -1,0 +1,22 @@
+# Lo que NO se envía al contexto de construcción del frontend
+node_modules
+dist
+out-tsc
+.angular
+.git
+.vscode
+backend
+docs
+*.md
+docker-compose.yml
+.env
+
+# Archivos compilados que están en la raíz por GitHub Pages
+browser
+main-*.js
+styles-*.css
+3rdpartylicenses.txt
+prerendered-routes.json
+/index.html
+/datos
+/img

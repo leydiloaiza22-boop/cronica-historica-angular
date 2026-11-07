@@ -1,6 +1,8 @@
 import { Component, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 
+import { AuthService } from '../../servicios/auth.service';
 import { CronicasService } from '../../servicios/cronicas.service';
 
 /* =========================================================
@@ -22,7 +24,11 @@ export class ContactoComponent {
 
     private servicio = inject(CronicasService);
 
+    auth = inject(AuthService);
+
     private router = inject(Router);
+
+    private http = inject(HttpClient);
 
 
     /* FECHA */
@@ -147,6 +153,12 @@ export class ContactoComponent {
 
 
         this.mensajeEnviado.set(true);
+
+
+        // Se guarda también en la base de datos del backend
+        // (si el servidor no está disponible, la página sigue igual)
+        this.http.post('api/contacto', { nombre, correo, mensaje })
+            .subscribe({ error: () => { } });
 
 
         formulario.reset();

@@ -7,3 +7,8 @@ npm-debug.log
 yarn-error.log
 .DS_Store
 Thumbs.db
+
+# Docker / backend
+.env
+backend/data/
+__pycache__/

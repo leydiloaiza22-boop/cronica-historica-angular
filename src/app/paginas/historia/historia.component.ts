@@ -12,6 +12,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { Cronica } from '../../modelos/cronica';
+import { AuthService } from '../../servicios/auth.service';
 import { CronicasService } from '../../servicios/cronicas.service';
 
 /* =========================================================
@@ -31,6 +32,8 @@ import { CronicasService } from '../../servicios/cronicas.service';
 export class HistoriaComponent implements OnInit, OnDestroy {
 
     private servicio = inject(CronicasService);
+
+    auth = inject(AuthService);
 
     private ruta = inject(ActivatedRoute);
 

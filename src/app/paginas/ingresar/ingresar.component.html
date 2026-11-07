@@ -1,0 +1,356 @@
+<div class="sitio">
+
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
+
+    <header class="encabezado">
+
+        <div class="encabezado-superior">
+
+            <a routerLink="/" class="logo">
+                CRÓNICA HISTÓRICA
+            </a>
+
+            <span
+                class="fecha"
+                id="fechaActual"
+            >
+                {{ fechaActual }}
+            </span>
+
+        </div>
+
+
+        <div class="linea-separadora"></div>
+
+
+        <nav class="navegacion">
+
+            <div class="menu-enlaces">
+
+                <a routerLink="/">
+                    Inicio
+                </a>
+
+                <a routerLink="/historia">
+                    Crónicas
+                </a>
+
+                <a routerLink="/historia" fragment="archivo">
+                    Archivos
+                </a>
+
+                <a routerLink="/historia" [queryParams]="{ favoritos: 1 }">
+                    Favoritos
+                </a>
+
+                <a routerLink="/contacto">
+                    Contacto
+                </a>
+
+                <a routerLink="/ingresar" id="enlaceSesion" class="activo">
+                    {{ auth.etiquetaMenu() }}
+                </a>
+
+            </div>
+
+
+            <div class="acciones-menu">
+
+                <input
+                    type="search"
+                    class="busqueda-simple"
+                    placeholder="Buscar"
+                    aria-label="Buscar crónicas"
+                    #buscador
+                    (keydown)="buscarCronicas($event, buscador.value)"
+                >
+
+                <button
+                    type="button"
+                    class="boton-suscripcion"
+                    id="botonSuscripcion"
+                    (click)="configurarSuscripcion()"
+                >
+                    Suscríbete
+                </button>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+
+    <main>
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section class="hero-interno">
+
+            <div>
+
+                <span class="etiqueta">
+                    CRÓNICA HISTÓRICA
+                </span>
+
+                <h1>
+                    {{ auth.usuario() ? "Mi cuenta" : (modo() === "login" ? "Iniciar sesión" : "Crear cuenta") }}
+                </h1>
+
+                <p>
+                    Ingresa para guardar, crear y administrar
+                    las crónicas de nuestro archivo histórico.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             CUENTA
+        ================================================== -->
+
+        <section class="contacto">
+
+            <div class="contacto-info">
+
+                <span class="subtitulo">
+                    COMUNIDAD
+                </span>
+
+                <h2>
+                    Únete a quienes conservan la memoria
+                </h2>
+
+                <p>
+                    Con tu cuenta puedes gestionar las crónicas
+                    del archivo. Tus datos quedan guardados en la
+                    base de datos del servidor.
+                </p>
+
+                <div class="detalle-contacto">
+
+                    <div>
+                        <strong>
+                            Servidor
+                        </strong>
+
+                        <span id="estadoServidor">
+                            @if (estado() === undefined) {
+                                Comprobando...
+                            } @else if (estado(); as servidor) {
+                                Conectado ({{ servidor.contenedor }})
+                            } @else {
+                                Sin conexión
+                            }
+                        </span>
+                    </div>
+
+                    <div>
+                        <strong>
+                            Usuarios registrados
+                        </strong>
+
+                        <span id="totalUsuarios">
+                            {{ estado()?.base_datos?.usuarios ?? "—" }}
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="formulario-contenedor">
+
+                @if (auth.usuario(); as usuario) {
+
+                    <!-- ============ SESIÓN INICIADA ============ -->
+
+                    <div class="sesion-activa" id="sesionActiva">
+
+                        <div class="campo">
+                            <label>Nombre</label>
+                            <strong id="nombreUsuario">{{ usuario.nombre }}</strong>
+                        </div>
+
+                        <div class="campo">
+                            <label>Correo electrónico</label>
+                            <span>{{ usuario.correo }}</span>
+                        </div>
+
+                        <div class="botones-crud">
+
+                            <a
+                                routerLink="/historia"
+                                class="boton-principal"
+                            >
+                                Ir a las crónicas
+                            </a>
+
+                            <button
+                                type="button"
+                                class="boton-secundario"
+                                id="cerrarSesion"
+                                (click)="cerrarSesion()"
+                            >
+                                Cerrar sesión
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                } @else {
+
+                    <!-- ============ LOGIN / REGISTRO ============ -->
+
+                    <form
+                        id="formularioSesion"
+                        novalidate
+                        #formulario
+                        (submit)="enviar($event, formulario)"
+                    >
+
+                        @if (modo() === "registro") {
+
+                            <div class="campo">
+
+                                <label for="nombre">
+                                    Nombre
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="nombre"
+                                    name="nombre"
+                                    placeholder="Escribe tu nombre"
+                                    autocomplete="name"
+                                    #nombre
+                                >
+
+                                <small
+                                    class="error-campo"
+                                    id="errorNombre"
+                                >{{ errores().nombre }}</small>
+
+                            </div>
+
+                        }
+
+
+                        <div class="campo">
+
+                            <label for="correo">
+                                Correo electrónico
+                            </label>
+
+                            <input
+                                type="email"
+                                id="correo"
+                                name="correo"
+                                placeholder="correo@ejemplo.com"
+                                autocomplete="email"
+                                #correo
+                            >
+
+                            <small
+                                class="error-campo"
+                                id="errorCorreo"
+                            >{{ errores().correo }}</small>
+
+                        </div>
+
+
+                        <div class="campo">
+
+                            <label for="password">
+                                Contraseña
+                            </label>
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Mínimo 6 caracteres"
+                                [attr.autocomplete]="modo() === 'login' ? 'current-password' : 'new-password'"
+                                #password
+                            >
+
+                            <small
+                                class="error-campo"
+                                id="errorPassword"
+                            >{{ errores().password }}</small>
+
+                        </div>
+
+
+                        <div class="botones-crud">
+
+                            <button
+                                type="submit"
+                                class="boton-principal"
+                                [disabled]="enviando()"
+                            >
+                                {{ modo() === "login" ? "Iniciar sesión" : "Crear cuenta" }}
+                            </button>
+
+                            <button
+                                type="button"
+                                class="boton-secundario"
+                                id="cambiarModo"
+                                (click)="cambiarModo()"
+                            >
+                                {{ modo() === "login" ? "Crear una cuenta" : "Ya tengo cuenta" }}
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            id="mensajeSesion"
+                            class="mensaje-formulario"
+                            [class.error-campo]="mensajeError()"
+                            role="status"
+                        >
+                            {{ mensajeError() }}
+                        </div>
+
+                    </form>
+
+                }
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer class="footer">
+
+        <div>
+
+            <strong>
+                CRÓNICA HISTÓRICA
+            </strong>
+
+            <p>
+                Revista digital de memoria,
+                historia y patrimonio.
+            </p>
+
+        </div>
+
+        <p class="derechos">
+            Derechos reservados © 2026
+        </p>
+
+    </footer>
+
+</div>

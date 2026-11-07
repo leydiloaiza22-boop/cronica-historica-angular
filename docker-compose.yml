@@ -1,0 +1,50 @@
+# =========================================================
+# CRÓNICA HISTÓRICA - Orquestación de los dos contenedores
+#   frontend : Angular servido por Nginx  (http://localhost:8080)
+#   backend  : API REST Flask + SQLite     (http://localhost:3000)
+# =========================================================
+
+name: cronica-historica
+
+services:
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: cronica-historica-backend:1.0
+    container_name: cronica-backend
+    environment:
+      SECRET_KEY: ${SECRET_KEY:-cambia-esta-clave-secreta}
+      DB_PATH: /app/data/cronica.db
+    volumes:
+      - datos-backend:/app/data          # la base de datos sobrevive a reinicios
+    ports:
+      - "3000:3000"                      # opcional: probar la API directo (Postman)
+    networks:
+      - red-cronica
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cronica-historica-frontend:1.0
+    container_name: cronica-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      backend:
+        condition: service_healthy      # espera a que la API responda
+    networks:
+      - red-cronica
+    restart: unless-stopped
+
+networks:
+  red-cronica:
+    name: red-cronica
+    driver: bridge
+
+volumes:
+  datos-backend:
+    name: cronica-datos-backend

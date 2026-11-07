@@ -46,6 +46,10 @@
                     Contacto
                 </a>
 
+                <a routerLink="/ingresar" id="enlaceSesion">
+                    {{ auth.etiquetaMenu() }}
+                </a>
+
             </div>
 
 
@@ -336,6 +340,18 @@
 
                 <div class="gestion-contenido">
 
+                    @if (!auth.usuario()) {
+
+                    <p id="avisoSesion">
+                        Para crear, editar o eliminar crónicas debes
+                        <a
+                            routerLink="/ingresar"
+                            [queryParams]="{ volver: '/historia' }"
+                        >iniciar sesión</a>.
+                    </p>
+
+                    } @else {
+
                     <p>
                         Esta sección permite crear,
                         editar y eliminar registros del
@@ -501,6 +517,8 @@
 
                         }
                     </div>
+
+                    }
 
                 </div>
 
