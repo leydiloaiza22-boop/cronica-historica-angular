@@ -14,8 +14,7 @@ docker ps
 - API: **http://localhost:8080/api/status** (a través de Nginx) o http://localhost:3000/api/status (directo)
 - Usuario de prueba: `demo@cronica.com` / `Cronica2026`
 
-Guía completa, explicación de cada archivo y pruebas de comunicación entre contenedores:
-**[docs/ENTREGA-1-DOCKER.md](docs/ENTREGA-1-DOCKER.md)**
+
 
 ## Ejecutar sin Docker (Visual Studio Code)
 
@@ -28,9 +27,7 @@ python app.py
 # Terminal 2 – Angular
 npm install
 npm start
-```
 
-Abrir http://localhost:4200 (las peticiones a `/api` se reenvían a `http://localhost:3000`).
 
 ## Estructura
 
