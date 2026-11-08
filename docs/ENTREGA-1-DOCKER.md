@@ -511,15 +511,3 @@ npm start                           # http://localhost:4200
 | Cambié el código y no se ve | `docker compose up -d --build` |
 | En Windows, `npm ci` falla dentro de Docker | Verifique que `package-lock.json` esté en el repositorio y sincronizado con `package.json` (`npm install` y vuelva a hacer commit). |
 
----
-
-## 12. Evidencias sugeridas para el informe
-
-1. `docker compose build` terminado.
-2. `docker ps` con los dos contenedores **healthy**.
-3. `docker network inspect red-cronica` mostrando ambos contenedores.
-4. `docker compose exec frontend wget -qO- http://backend:3000/api/status`.
-5. `curl http://localhost:8080/api/status` y el log del backend con la IP del frontend.
-6. El sitio en `http://localhost:8080`, página **Ingresar** con "Servidor: Conectado".
-7. Registro de un usuario y la consulta SQL de la tabla `usuarios`.
-8. El repositorio en GitHub con `Dockerfile`, `backend/`, `nginx/default.conf` y `docker-compose.yml`.
