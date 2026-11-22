@@ -76,11 +76,11 @@ verificar "dns_interno_resuelve_los_servicios" 'frontend=' \
 
 # 4. Proxy inverso de Nginx: /api/ llega al backend
 verificar "nginx_reenvia_api_al_backend" '"servicio":"backend"' \
-  docker compose exec -T frontend wget -qO- http://localhost/api/status
+  docker compose exec -T frontend wget -qO- http://127.0.0.1/api/status
 
 # 5. Nginx entrega la aplicación Angular en las rutas internas
 verificar "nginx_sirve_angular_en_rutas_internas" '<app-root' \
-  docker compose exec -T frontend wget -qO- http://localhost/historia
+  docker compose exec -T frontend wget -qO- http://127.0.0.1/historia
 
 # 6. Flujo completo por el proxy: login + ruta protegida con token
 verificar "login_y_ruta_protegida_por_el_proxy" 'demo@cronica.com' \
