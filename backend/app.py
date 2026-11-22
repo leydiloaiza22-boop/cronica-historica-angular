@@ -34,17 +34,46 @@ from werkzeug.security import check_password_hash, generate_password_hash
 # CONFIGURACIÓN (variables de entorno en docker-compose.yml)
 # =========================================================
 
+# Las claves NO se escriben en el código: llegan como variables de entorno.
+#  - En Docker: archivo .env (no se sube a GitHub) leído por docker-compose.yml
+#  - En Jenkins / GitHub Actions / Travis CI: credenciales o secretos de la herramienta
+#  - En desarrollo local (python app.py): se lee el archivo .env si existe
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+
+def cargar_env_local():
+    """Solo para desarrollo local: lee ../.env y ./.env sin pisar variables ya definidas."""
+    for ruta in (os.path.join(BASE_DIR, "..", ".env"), os.path.join(BASE_DIR, ".env")):
+        if not os.path.isfile(ruta):
+            continue
+        with open(ruta, encoding="utf-8") as archivo:
+            for linea in archivo:
+                linea = linea.strip()
+                if not linea or linea.startswith("#") or "=" not in linea:
+                    continue
+                clave, valor = linea.split("=", 1)
+                os.environ.setdefault(clave.strip(), valor.strip().strip('"').strip("'"))
+
+
+cargar_env_local()
+
 DB_PATH = os.environ.get("DB_PATH", os.path.join(BASE_DIR, "data", "cronica.db"))
-SECRET_KEY = os.environ.get("SECRET_KEY", "cambia-esta-clave-en-produccion")
+SECRET_KEY = os.environ.get("SECRET_KEY", "")
 TOKEN_HORAS = int(os.environ.get("TOKEN_HORAS", "8"))
 SEMILLA_CRONICAS = os.path.join(BASE_DIR, "datos", "cronicas.json")
 
+if len(SECRET_KEY) < 16:
+    raise RuntimeError(
+        "Falta la variable SECRET_KEY (mínimo 16 caracteres). "
+        "Copie .env.example como .env y defina una clave propia."
+    )
+
+# Usuario de demostración: solo se crea si DEMO_PASSWORD está definida
 USUARIO_DEMO = {
     "nombre": os.environ.get("DEMO_NOMBRE", "Usuario Demo"),
     "correo": os.environ.get("DEMO_CORREO", "demo@cronica.com"),
-    "password": os.environ.get("DEMO_PASSWORD", "Cronica2026"),
+    "password": os.environ.get("DEMO_PASSWORD", ""),
 }
 
 PATRON_CORREO = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
@@ -138,7 +167,7 @@ def inicializar_db():
         existe = conexion.execute(
             "SELECT 1 FROM usuarios WHERE correo = ?", (USUARIO_DEMO["correo"].lower(),)
         ).fetchone()
-        if existe is None:
+        if existe is None and USUARIO_DEMO["password"]:
             conexion.execute(
                 """INSERT INTO usuarios (nombre, correo, password_hash, creado_en)
                    VALUES (?, ?, ?, ?)""",

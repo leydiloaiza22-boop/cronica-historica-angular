@@ -1,0 +1,6 @@
+# Los scripts se ejecutan en Linux (Jenkins, contenedores): siempre con saltos LF
+*.sh          text eol=lf
+Jenkinsfile   text eol=lf
+*.yml         text eol=lf
+*.conf        text eol=lf
+Dockerfile    text eol=lf

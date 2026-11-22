@@ -1,0 +1,73 @@
+# =========================================================
+# JENKINS para Crónica Histórica (servidor de integración continua)
+#
+#   jenkins        : jenkins/jenkins:lts-jdk21 + Docker CLI + plugins
+#                    interfaz web en http://localhost:8090
+#   jenkins-docker : motor Docker aislado (docker:dind) donde el
+#                    pipeline construye y prueba los contenedores
+#
+# Antes:     cp jenkins/.env.example jenkins/.env   (y editar los valores)
+# Iniciar:   docker compose -f jenkins/docker-compose.yml up -d --build
+# Ingresar:  http://localhost:8090 con JENKINS_ADMIN_ID / JENKINS_ADMIN_PASSWORD
+#            (Configuration as Code: no hay asistente ni clave inicial)
+# =========================================================
+
+name: jenkins-cronica
+
+services:
+
+  jenkins-docker:
+    image: docker:27-dind
+    container_name: jenkins-docker
+    privileged: true                    # requerido por Docker-in-Docker
+    command: ["--storage-driver", "overlay2"]
+    environment:
+      DOCKER_TLS_CERTDIR: /certs        # comunicación con Jenkins cifrada (TLS)
+    volumes:
+      - jenkins-docker-certs:/certs/client
+      - jenkins-data:/var/jenkins_home
+      - jenkins-docker-cache:/var/lib/docker   # caché de imágenes entre builds
+    networks:
+      jenkins:
+        aliases:
+          - docker
+    restart: unless-stopped
+
+  jenkins:
+    build: .
+    image: jenkins-cronica:lts
+    container_name: jenkins
+    depends_on:
+      - jenkins-docker
+    environment:
+      DOCKER_HOST: tcp://docker:2376
+      DOCKER_CERT_PATH: /certs/client
+      DOCKER_TLS_VERIFY: "1"
+      JAVA_OPTS: >-
+        -Djenkins.install.runSetupWizard=false
+        -Duser.timezone=America/Bogota
+      # Variables de jenkins/.env que usa jenkins.yaml (JCasC)
+      JENKINS_ADMIN_ID: ${JENKINS_ADMIN_ID:-admin}
+      JENKINS_ADMIN_PASSWORD: ${JENKINS_ADMIN_PASSWORD:?Defina JENKINS_ADMIN_PASSWORD en jenkins/.env}
+      CRONICA_SECRET_KEY: ${CRONICA_SECRET_KEY:?Defina CRONICA_SECRET_KEY en jenkins/.env}
+      CRONICA_DEMO_PASSWORD: ${CRONICA_DEMO_PASSWORD:?Defina CRONICA_DEMO_PASSWORD en jenkins/.env}
+      GITHUB_USUARIO: ${GITHUB_USUARIO:-sin-usuario}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-sin-token}
+    ports:
+      - "8090:8080"                     # interfaz web de Jenkins
+      - "50000:50000"                   # agentes (opcional)
+    volumes:
+      - jenkins-data:/var/jenkins_home  # configuración, jobs, credenciales e historial
+      - jenkins-docker-certs:/certs/client:ro
+    networks:
+      - jenkins
+    restart: unless-stopped
+
+networks:
+  jenkins:
+    name: jenkins
+
+volumes:
+  jenkins-data:
+  jenkins-docker-certs:
+  jenkins-docker-cache:

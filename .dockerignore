@@ -20,3 +20,13 @@ prerendered-routes.json
 /index.html
 /datos
 /img
+
+# Archivos de integración continua (no son parte de la aplicación)
+.github
+.env.example
+ci
+jenkins
+Jenkinsfile
+.travis.yml
+codeship-*.yml
+reportes

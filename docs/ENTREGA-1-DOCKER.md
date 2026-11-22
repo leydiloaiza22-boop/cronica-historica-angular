@@ -1,4 +1,6 @@
 # Entrega 1 (Semana 3) – Integración Continua
+
+> **Actualización (Entrega 2):** las claves ya no están en `docker-compose.yml`. Antes de `docker compose build` copie `.env.example` como `.env` y defina `SECRET_KEY` y `DEMO_PASSWORD`. Ver `docs/ENTREGA-2-JENKINS.md`.
 ## Crónica Histórica: dos contenedores Docker comunicados entre sí
 
 ---
@@ -147,7 +149,7 @@ Se crea sola al iniciar el contenedor, en `/app/data/cronica.db`:
 
 - Las contraseñas **no se guardan en texto plano**: se guarda un *hash* (`werkzeug.security`).
 - Los tokens de sesión van firmados con `SECRET_KEY` y vencen a las 8 horas.
-- Se crea un **usuario de demostración**: `demo@cronica.com` / `Cronica2026`.
+- Se crea un **usuario de demostración** `demo@cronica.com`, con la contraseña definida en `DEMO_PASSWORD` del archivo `.env`.
 
 ### 5.3 `backend/Dockerfile`
 
@@ -238,8 +240,9 @@ services:
       dockerfile: Dockerfile
     image: cronica-historica-backend:1.0
     container_name: cronica-backend
+    env_file:
+      - .env                 # SECRET_KEY y DEMO_PASSWORD (actualizado en la Entrega 2)
     environment:
-      SECRET_KEY: ${SECRET_KEY:-cambia-esta-clave-secreta}
       DB_PATH: /app/data/cronica.db
     volumes:
       - datos-backend:/app/data
@@ -420,7 +423,7 @@ cronica-backend | 172.18.0.3 - - [...] "GET /api/status HTTP/1.1" 200 ...
 
 1. Abrir **http://localhost:8080**.
 2. Clic en **Ingresar** → en "Servidor" debe decir **Conectado (id del contenedor)**.
-3. **Crear una cuenta** (o entrar con `demo@cronica.com` / `Cronica2026`). El menú cambia a "Hola, …".
+3. **Crear una cuenta** (o entrar con `demo@cronica.com` y la contraseña de `DEMO_PASSWORD` (archivo `.env`)). El menú cambia a "Hola, …".
 4. Ir a **Crónicas → Gestión básica de crónicas**: ahora se puede crear, editar y eliminar.
 5. Enviar un mensaje en **Contacto**.
 6. Volver a **Ingresar**: "Usuarios registrados" aumentó.
@@ -449,7 +452,7 @@ Respuesta (`201 Created`):
 {"token":"eyJpZCI6Mn0...","usuario":{"id":2,"nombre":"Carlos Daza","correo":"carlos@correo.com","creado_en":"..."}}
 ```
 
-En **Postman**: `POST http://localhost:8080/api/auth/login` con *Body → raw → JSON* `{"correo":"demo@cronica.com","password":"Cronica2026"}`. Copiar el `token` y llamar `GET http://localhost:8080/api/usuarios` con *Authorization → Bearer Token*.
+En **Postman**: `POST http://localhost:8080/api/auth/login` con *Body → raw → JSON* `{"correo":"demo@cronica.com","password":"<DEMO_PASSWORD>"}`. Copiar el `token` y llamar `GET http://localhost:8080/api/usuarios` con *Authorization → Bearer Token*.
 
 ### 9.9 Ver los datos guardados en la base de datos
 

@@ -1,0 +1,44 @@
+# =========================================================
+# Jenkins Configuration as Code (JCasC) - Crónica Histórica
+# Jenkins arranca listo, sin asistente de instalación:
+#   usuario administrador, mensaje, ejecutores y CREDENCIALES.
+# Los valores secretos NO están aquí: llegan como variables de
+# entorno desde jenkins/.env (que no se sube a GitHub).
+# =========================================================
+jenkins:
+  systemMessage: "Jenkins de Crónica Histórica - Grupo de trabajo 12 (Integración Continua)"
+  numExecutors: 2          # en producción: 0 en el controlador y builds en agentes
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "${JENKINS_ADMIN_ID:-admin}"
+          password: "${JENKINS_ADMIN_PASSWORD}"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - string:
+              scope: GLOBAL
+              id: "cronica-secret-key"
+              description: "SECRET_KEY de la API (firma de tokens)"
+              secret: "${CRONICA_SECRET_KEY}"
+          - string:
+              scope: GLOBAL
+              id: "cronica-demo-password"
+              description: "Contraseña del usuario demo para la prueba de integración"
+              secret: "${CRONICA_DEMO_PASSWORD}"
+          - usernamePassword:
+              scope: GLOBAL
+              id: "github-cronica"
+              description: "Usuario y token de GitHub (solo lectura)"
+              username: "${GITHUB_USUARIO:-sin-usuario}"
+              password: "${GITHUB_TOKEN:-sin-token}"
+
+unclassified:
+  location:
+    url: "http://localhost:8090/"

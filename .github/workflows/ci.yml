@@ -1,0 +1,99 @@
+# =========================================================
+# CRÓNICA HISTÓRICA - Integración continua con GitHub Actions
+# Mismo flujo que el Jenkinsfile, en dos jobs:
+#   pruebas : ruff + pytest del backend (con reporte JUnit)
+#   imagen  : build de las dos imágenes, prueba de humo e
+#             integración (compose) y escaneo con Trivy
+# El job "imagen" solo corre si "pruebas" pasa: el código con
+# errores nunca llega a convertirse en imagen.
+# Las claves vienen de los SECRETOS del repositorio
+# (Settings > Secrets and variables > Actions), nunca del código.
+# =========================================================
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pruebas:
+    name: Pruebas (ruff + pytest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias de desarrollo
+        run: pip install -r backend/requirements-dev.txt
+
+      - name: Análisis estático (ruff)
+        run: ruff check backend
+
+      - name: Pruebas unitarias (pytest)
+        working-directory: backend
+        run: python -m pytest -v -p no:cacheprovider --junitxml=../reportes/pruebas-unitarias.xml
+
+      - name: Guardar reporte de pruebas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reporte-pruebas
+          path: reportes/pruebas-unitarias.xml
+          if-no-files-found: ignore
+
+  imagen:
+    name: Build, prueba de humo e integración
+    needs: pruebas
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Crear .env con los secretos del repositorio
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DEMO_PASSWORD: ${{ secrets.DEMO_PASSWORD }}
+        run: |
+          # Si los secretos no existen (por ejemplo, en un fork), se generan
+          # valores aleatorios de un solo uso para este build.
+          if [ -z "$SECRET_KEY" ]; then SECRET_KEY=$(openssl rand -hex 32); fi
+          if [ -z "$DEMO_PASSWORD" ]; then DEMO_PASSWORD=$(openssl rand -hex 12); fi
+          echo "::add-mask::$SECRET_KEY"
+          echo "::add-mask::$DEMO_PASSWORD"
+          export SECRET_KEY DEMO_PASSWORD
+          bash ci/crear-env.sh
+
+      - name: Construir las imágenes (docker compose build)
+        run: |
+          docker compose build
+          docker images "cronica-historica-*"
+
+      - name: Prueba de humo e integración
+        run: bash ci/prueba-integracion.sh
+
+      - name: Escaneo de seguridad (Trivy)
+        run: bash ci/escaneo-seguridad.sh
+
+      - name: Guardar reportes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reportes-integracion
+          path: reportes/
+          if-no-files-found: ignore
+
+      - name: Apagar los contenedores
+        if: always()
+        run: docker compose down -v --remove-orphans

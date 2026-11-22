@@ -2,6 +2,10 @@
 # CRÓNICA HISTÓRICA - Orquestación de los dos contenedores
 #   frontend : Angular servido por Nginx  (http://localhost:8080)
 #   backend  : API REST Flask + SQLite     (http://localhost:3000)
+#
+# Las claves (SECRET_KEY, DEMO_PASSWORD) NO están en este archivo:
+# se leen del archivo .env, que no se sube a GitHub (.gitignore).
+#   cp .env.example .env     y luego edite los valores
 # =========================================================
 
 name: cronica-historica
@@ -12,17 +16,21 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      target: production                # etapa final (sin pytest)
     image: cronica-historica-backend:1.0
     container_name: cronica-backend
+    env_file:
+      - .env                            # SECRET_KEY y DEMO_PASSWORD (no se sube a GitHub)
     environment:
-      SECRET_KEY: ${SECRET_KEY:-cambia-esta-clave-secreta}
       DB_PATH: /app/data/cronica.db
     volumes:
       - datos-backend:/app/data          # la base de datos sobrevive a reinicios
     ports:
-      - "3000:3000"                      # opcional: probar la API directo (Postman)
+      - "127.0.0.1:3000:3000"            # solo desde este equipo (Postman); no expuesto a la red
     networks:
       - red-cronica
+    security_opt:
+      - no-new-privileges:true
     restart: unless-stopped
 
   frontend:
@@ -38,6 +46,8 @@ services:
         condition: service_healthy      # espera a que la API responda
     networks:
       - red-cronica
+    security_opt:
+      - no-new-privileges:true
     restart: unless-stopped
 
 networks:

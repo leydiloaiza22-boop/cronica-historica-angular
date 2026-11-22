@@ -1,0 +1,15 @@
+# Plugins que se instalan en la imagen de Jenkins (jenkins-plugin-cli)
+configuration-as-code
+git
+github
+workflow-aggregator
+docker-workflow
+json-path-api
+pipeline-graph-view
+pipeline-stage-view
+credentials
+plain-credentials
+credentials-binding
+junit
+timestamper
+ws-cleanup

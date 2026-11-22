@@ -12,3 +12,5 @@ Thumbs.db
 .env
 backend/data/
 __pycache__/
+reportes/
+.pytest_cache/
