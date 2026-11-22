@@ -242,7 +242,7 @@ def leer_json():
 def estado():
     db = obtener_db()
     return jsonify({
-        "estado": "activo",
+        "estado": "ok",
         "servicio": "backend",
         "contenedor": socket.gethostname(),
         "hora": ahora(),
